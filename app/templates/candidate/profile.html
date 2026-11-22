@@ -1,2 +1,154 @@
 {% extends "base.html" %}
-{% block content %}{% endblock %}
+{% block title %}My profile – CareerBridge{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/candidate.css') }}">
+<script>
+  window.profileSections = {{ sections | tojson }};
+  window.profileBasic = {
+    name: {{ candidate.name | tojson }},
+    email: {{ candidate.email | tojson }},
+    headline: {{ (candidate_profile.headline or '') | tojson }},
+    location: {{ (candidate_profile.location or '') | tojson }},
+    phone: {{ (candidate_profile.phone or '') | tojson }},
+    gender: {{ (candidate_profile.gender or '') | tojson }},
+    birthday: {{ (candidate_profile.birthday.isoformat() if candidate_profile.birthday else '') | tojson }}
+  };
+</script>
+<script src="{{ url_for('static', filename='js/candidate_profile.js') }}" defer></script>
+
+<section class="candidate-shell profile-page">
+  <div class="profile-header">
+    <a class="back-link" href="{{ url_for('candidate.dashboard') }}">← Dashboard</a>
+    <div class="profile-header__content">
+      <div class="profile-avatar profile-avatar--large">
+        {% if candidate_profile.photo_path %}
+          <img src="{{ url_for('candidate.profile_file', file_path=candidate_profile.photo_path) }}" alt="{{ candidate.name }}">
+        {% else %}
+          <span>{{ candidate.name[:1] | upper }}</span>
+        {% endif %}
+        <b>{{ profile_completion }}%</b>
+      </div>
+      <div>
+        <p class="eyebrow">Candidate profile</p>
+        <h1>{{ candidate.name }}</h1>
+        <p class="profile-headline">{{ candidate_profile.headline or "Add a headline to help employers understand your goals." }}</p>
+        <div class="profile-facts">
+          {% if candidate_profile.location %}<span>⌖ {{ candidate_profile.location }}</span>{% endif %}
+          {% if candidate_profile.phone %}<span>☎ {{ candidate_profile.phone }}</span>{% endif %}
+          <span>✉ {{ candidate.email }}</span>
+          {% if candidate_profile.gender %}<span>♙ {{ candidate_profile.gender }}</span>{% endif %}
+          {% if candidate_profile.birthday %}<span>♧ {{ candidate_profile.birthday.strftime('%d %b %Y') }}</span>{% else %}<button class="inline-add" type="button" data-section="basic">Add birthday</button>{% endif %}
+        </div>
+      </div>
+      <button class="btn btn--ghost" type="button" data-section="basic">Edit profile</button>
+    </div>
+  </div>
+
+  <div class="profile-layout">
+    <aside class="quick-links">
+      <h2>Quick links</h2>
+      {% set section_items = [
+        ("Preferences","preferences"), ("Education","education"), ("Key skills","key-skills"),
+        ("Languages","languages"), ("Internships","internships"), ("Projects","projects"),
+        ("Profile summary","profile-summary"), ("Certifications","certifications"),
+        ("Awards","awards"), ("Club & committees","clubs"), ("Competitive exams","competitive-exams"),
+        ("Employment","employment"), ("Academic achievements","academic-achievements"), ("Resume","resume")
+      ] %}
+      {% for label, anchor in section_items %}
+      <a href="#{{ anchor }}">{{ label }}<span>{{ 'Edit' if sections.get(anchor.replace('-', '_')) else 'Add' }}</span></a>
+      {% endfor %}
+    </aside>
+
+    <div class="profile-content">
+      <section class="profile-section" id="preferences">
+        <div class="section-heading"><h2>Your career preferences</h2><button type="button" data-section="preferences">{{ 'Edit' if sections.get('preferences') else 'Add' }}</button></div>
+        <div class="preference-grid">
+          <div><small>Preferred job type</small><strong>{{ sections.preferences.job_types if sections.get('preferences') and sections.preferences.get('job_types') else 'Add desired job type' }}</strong></div>
+          <div><small>Availability to work</small><strong>{{ sections.preferences.availability if sections.get('preferences') and sections.preferences.get('availability') else 'Add work availability' }}</strong></div>
+          <div><small>Preferred location</small><strong>{{ sections.preferences.locations if sections.get('preferences') and sections.preferences.get('locations') else 'Add preferred work location' }}</strong></div>
+        </div>
+      </section>
+
+      <section class="profile-section" id="education">
+        <div class="section-heading"><h2>Education</h2><button type="button" data-section="education">{{ 'Edit' if sections.get('education') else 'Add' }}</button></div>
+        {% if sections.get('education') %}
+          <h3>{{ sections.education.course or sections.education.qualification }}</h3>
+          <p class="muted">{{ sections.education.college }} · {{ sections.education.graduation_year }}</p>
+        {% else %}
+          <h3>Add your highest qualification</h3>
+          <p class="muted">Add your college, course and graduation details to improve your job matches.</p>
+        {% endif %}
+      </section>
+
+      <section class="profile-section" id="key-skills">
+        <div class="section-heading"><h2>Key skills</h2><button type="button" data-section="key_skills">{{ 'Edit' if skills else 'Add' }}</button></div>
+        <div class="skill-list">
+          {% for skill in skills %}<span>{{ skill }}</span>{% else %}<p class="muted">Add your technical and professional skills.</p>{% endfor %}
+        </div>
+      </section>
+
+      {% for section, title, description in [
+        ('languages','Languages','Add languages you can read, write or speak.'),
+        ('internships','Internships','Add your internship company, role, duration and work.'),
+        ('projects','Projects','Describe projects you built or contributed to.'),
+        ('profile_summary','Profile summary','Write a short professional summary of your career and goals.'),
+        ('certifications','Certifications','Add certifications and completed courses.'),
+        ('awards','Awards','Add awards and special recognitions.'),
+        ('clubs','Club & committees','Add positions and responsibilities you held.'),
+        ('competitive_exams','Competitive exams','Add exams and rank or score details.'),
+        ('employment','Employment','Add companies, job titles and work experience.'),
+        ('academic_achievements','Academic achievements','Add academic awards or achievements.')
+      ] %}
+      <section class="profile-section" id="{{ section | replace('_','-') }}">
+        <div class="section-heading"><h2>{{ title }}</h2><button type="button" data-section="{{ section }}">{{ 'Edit' if sections.get(section) else 'Add' }}</button></div>
+        {% if sections.get(section) %}
+          {% for key, value in sections[section].items() %}
+            {% if value is iterable and value is not string %}<p><b>{{ key|replace('_',' ')|title }}:</b> {{ value|join(', ') }}</p>
+            {% else %}<p><b>{{ key|replace('_',' ')|title }}:</b> {{ value }}</p>{% endif %}
+          {% endfor %}
+        {% else %}
+          <p class="muted">{{ description }}</p>
+        {% endif %}
+      </section>
+      {% endfor %}
+
+      <section class="profile-section" id="resume">
+        <div class="section-heading"><h2>Resume</h2><span>PDF, DOC or DOCX</span></div>
+        <p class="muted">Your resume is the first impression you make on potential employers. Upload a recent PDF or DOCX file.</p>
+        {% if candidate_profile.resume_path %}
+        <p class="resume-current">Current resume: <a href="{{ url_for('candidate.profile_file', file_path=candidate_profile.resume_path) }}" target="_blank">View uploaded resume</a></p>
+        {% endif %}
+        <form class="resume-dropzone" method="post" action="{{ url_for('candidate.upload_resume') }}" enctype="multipart/form-data">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input id="resume-file" name="resume" type="file" accept=".pdf,.doc,.docx" required>
+          <span class="upload-icon">↑</span>
+          <strong><label for="resume-file">Upload resume</label></strong>
+          <small>Supported formats: PDF, DOC or DOCX · up to 5 MB</small>
+          <button class="btn btn--primary btn--sm" type="submit">Save resume</button>
+        </form>
+      </section>
+
+      <section class="profile-section" id="photo">
+        <div class="section-heading"><h2>Profile photo</h2></div>
+        <form class="photo-form" method="post" action="{{ url_for('candidate.upload_photo') }}" enctype="multipart/form-data">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input id="photo-file" name="photo" type="file" accept=".jpg,.jpeg,.png" required>
+          <label class="btn btn--ghost" for="photo-file">Choose photo</label>
+          <button class="btn btn--primary" type="submit">Upload photo</button>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <div class="profile-modal-backdrop" id="profile-modal-backdrop" hidden></div>
+  <dialog class="profile-modal" id="profile-modal">
+    <form method="post" action="{{ url_for('candidate.save_profile_section') }}" id="profile-edit-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="section" id="profile-section-name">
+      <div class="profile-modal__head"><h2 id="profile-modal-title">Edit profile</h2><button type="button" id="profile-modal-close" aria-label="Close">&times;</button></div>
+      <div class="profile-modal__fields" id="profile-modal-fields"></div>
+      <div class="profile-modal__actions"><button class="btn btn--ghost" type="button" id="profile-modal-cancel">Cancel</button><button class="btn btn--primary" type="submit">Save changes</button></div>
+    </form>
+  </dialog>
+</section>
+{% endblock %}

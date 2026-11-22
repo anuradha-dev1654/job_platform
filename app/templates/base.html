@@ -1,12 +1,94 @@
+{% macro col(title, items) %}
+<div class="dd__col"><h3>{{ title }}</h3>
+  {% for label, q in items %}<a href="{{ url_for('jobs.search', q=q) }}">{{ label }}</a>{% endfor %}
+</div>
+{% endmacro %}
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Job Platform{% endblock %}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}">
+  <title>{% block title %}CareerBridge{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
 </head>
 <body>
-  {% block content %}{% endblock %}
+<header class="nav">
+  <div class="nav__in">
+    <a class="brand" href="{{ url_for('jobs.index') }}">
+      <svg width="30" height="30" viewBox="0 0 28 28" aria-hidden="true"><circle cx="9" cy="8" r="4" fill="#60A5FA"/><circle cx="19" cy="8" r="4" fill="#3B82F6"/><path d="M2 24c0-5 3-7 7-7s7 2 7 7zM12 24c0-5 3-7 7-7s7 2 7 7z" fill="#2563EB"/></svg>
+      CareerBridge
+    </a>
+
+    <nav class="nav__links" aria-label="Main">
+      <div class="dd">
+        <button class="dd__btn" type="button" aria-expanded="false" aria-controls="m-jobs">Jobs</button>
+        <div class="dd__menu" id="m-jobs">
+          {{ col("Popular categories", [("IT jobs","IT"),("Sales jobs","Sales"),("Marketing jobs","Marketing"),("Data Science jobs","Data Science"),("HR jobs","HR"),("Engineering jobs","Engineering")]) }}
+          {{ col("Jobs in demand", [("Fresher jobs","fresher"),("MNC jobs","MNC"),("Remote jobs","remote"),("Work from home jobs","work from home"),("Part-time jobs","part-time")]) }}
+          {{ col("Jobs by location", [("Jobs in Ahmedabad","Ahmedabad"),("Jobs in Mumbai","Mumbai"),("Jobs in Bangalore","Bangalore"),("Jobs in Delhi","Delhi"),("Jobs in Pune","Pune")]) }}
+        </div>
+      </div>
+      <div class="dd">
+        <button class="dd__btn" type="button" aria-expanded="false" aria-controls="m-comp">Companies</button>
+        <div class="dd__menu" id="m-comp">
+          {{ col("Explore categories", [("MNC","MNC"),("Startup","startup"),("Product based","product"),("Internet","internet")]) }}
+          {{ col("Explore collections", [("Top companies","top"),("IT companies","IT"),("Fintech companies","fintech")]) }}
+        </div>
+      </div>
+    </nav>
+
+    <div class="nav__right">
+      {% if current_user.is_authenticated %}
+        <a class="btn btn--ghost" href="{{ url_for(current_user.role ~ '.dashboard') }}">Dashboard</a>
+        <form method="post" action="{{ url_for('auth.logout') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn--primary" type="submit">Logout</button>
+        </form>
+      {% else %}
+        <a class="btn btn--ghost" href="{{ url_for('auth.login') }}">Login</a>
+        <a class="btn btn--ghost" href="{{ url_for('auth.register') }}">Candidate Register</a>
+        <a class="btn btn--primary" href="{{ url_for('auth.register_company') }}">Company Register</a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}<div class="flash-wrap">{% for cat, msg in messages %}<p class="flash flash--{{ cat }}">{{ msg }}</p>{% endfor %}</div>{% endif %}
+{% endwith %}
+
+<main>{% block content %}{% endblock %}</main>
+
+<footer class="foot">
+  <div class="foot__in">
+    <b>CareerBridge</b>
+    <nav aria-label="Footer"><a href="#">About us</a><a href="#">Privacy policy</a><a href="#">Terms &amp; conditions</a><a href="#">Help center</a></nav>
+    <small>&copy; CareerBridge</small>
+  </div>
+</footer>
+
+{% if not current_user.is_authenticated %}
+<div class="overlay" data-close-login hidden></div>
+<aside class="drawer" id="login-drawer" role="dialog" aria-modal="true" aria-labelledby="dr-title" hidden>
+  <div class="drawer__head">
+    <h2 id="dr-title">Login</h2>
+    <a href="{{ url_for('auth.register') }}">Register for free</a>
+    <button class="drawer__x" type="button" aria-label="Close login" data-close-login>&times;</button>
+  </div>
+  <form method="post" action="{{ url_for('auth.login') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="dl-email">Email ID</label>
+    <input class="field" id="dl-email" name="email" type="email" placeholder="Enter your active Email ID" required autocomplete="email">
+    <label for="dl-pass">Password</label>
+    <div class="pass">
+      <input class="field" id="dl-pass" name="password" type="password" placeholder="Enter your password" required autocomplete="current-password">
+      <button type="button" data-toggle-pass aria-controls="dl-pass">Show</button>
+    </div>
+    <label class="check"><input type="checkbox" name="remember"> Remember me</label>
+    <button class="btn btn--primary btn--block" type="submit">Login</button>
+  </form>
+</aside>
+{% endif %}
 </body>
 </html>

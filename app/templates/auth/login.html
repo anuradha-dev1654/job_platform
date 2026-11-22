@@ -1,2 +1,28 @@
 {% extends "base.html" %}
-{% block content %}{% endblock %}
+{% block title %}Login – CareerBridge{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+<section class="auth-page">
+  <div class="auth-card">
+    <aside class="auth-visual">
+      <a class="auth-brand" href="{{ url_for('jobs.index') }}">CareerBridge</a>
+      <div class="auth-visual__copy"><span>Welcome back</span><h1>Your next opportunity is waiting.</h1><p>Search jobs, improve your profile and apply with confidence.</p></div>
+      <div class="auth-orbit" aria-hidden="true"><div>CB</div><i></i><b></b></div>
+    </aside>
+    <div class="auth-form-wrap">
+      <div class="auth-tabs"><a class="active" href="{{ url_for('auth.login') }}">Login</a><a href="{{ url_for('auth.register') }}">Candidate register</a><a href="{{ url_for('auth.register_company') }}">Company register</a></div>
+      <h2>Sign in to CareerBridge</h2>
+      <p class="auth-subtitle">Use your candidate or company account.</p>
+      <form method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="auth-field">{{ form.email.label }}{{ form.email(autocomplete="email", placeholder="you@example.com") }}{% for e in form.email.errors %}<p class="err">{{ e }}</p>{% endfor %}</div>
+        <div class="auth-field">{{ form.password.label }}{{ form.password(autocomplete="current-password", placeholder="Enter password") }}{% for e in form.password.errors %}<p class="err">{{ e }}</p>{% endfor %}</div>
+        <label class="auth-check">{{ form.remember() }} Remember me</label>
+        <button class="btn btn--primary btn--block" type="submit">Login</button>
+      </form>
+      <p class="auth-switch">New candidate? <a href="{{ url_for('auth.register') }}">Create an account</a></p>
+      <p class="auth-switch">Hiring talent? <a href="{{ url_for('auth.register_company') }}">Register your company</a></p>
+    </div>
+  </div>
+</section>
+{% endblock %}

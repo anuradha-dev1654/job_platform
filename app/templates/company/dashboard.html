@@ -1,2 +1,92 @@
 {% extends "base.html" %}
-{% block content %}{% endblock %}
+{% block title %}Company dashboard – CareerBridge{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/candidate.css') }}">
+<section class="candidate-shell">
+  <div class="candidate-topbar">
+    <div><p class="eyebrow">Company dashboard</p><h1>{{ company.name }}</h1><p class="muted">{{ company.city or 'Location not specified' }}</p></div>
+  </div>
+  <div class="profile-layout">
+    <aside class="quick-links">
+      <h2>Company</h2>
+      <a href="#company-profile">Company information</a>
+      <a href="#post-job">Post a job</a>
+      <a href="#open-jobs">Open jobs <span>{{ jobs|length }}</span></a>
+      <a href="{{ url_for('jobs.company_detail', company_id=company.id) }}">Public profile</a>
+    </aside>
+    <div class="profile-content">
+      <section class="profile-section" id="company-profile">
+        <div class="section-heading"><h2>Company information</h2></div>
+        <form method="post" class="company-job-form" enctype="multipart/form-data">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="action" value="update_profile">
+          <div class="company-logo-editor">
+            <div class="company-logo-preview">
+              {% if company.logo_path %}<img src="{{ url_for('jobs.company_logo', company_id=company.id) }}" alt="{{ company.name }} logo">
+              {% else %}<span>{{ company.name[:1]|upper }}</span>{% endif %}
+            </div>
+            <label>Company logo
+              <input name="logo" type="file" accept=".jpg,.jpeg,.png">
+              <small>JPG or PNG, up to 5 MB</small>
+            </label>
+          </div>
+          <div class="company-form-grid">
+            <label>Website<input name="website" type="url" value="{{ company.website or '' }}" placeholder="https://example.com"></label>
+            <label>Head office location<input name="city" value="{{ company.city or '' }}" placeholder="Ahmedabad"></label>
+            <label>Industry<input name="industry" value="{{ company.industry or '' }}" placeholder="Information Technology"></label>
+            <label>Company size<input name="company_size" value="{{ company.company_size or '' }}" placeholder="200-500 employees"></label>
+            <label>Founded year<input name="founded_year" type="number" value="{{ company.founded_year or '' }}" placeholder="2018"></label>
+            <label>Rating<input name="rating" type="number" min="0" max="5" step="0.1" value="{{ company.rating or '' }}" placeholder="4.2"></label>
+          </div>
+          <label>Registered address<textarea name="address" rows="3" placeholder="Registered company address">{{ company.address or '' }}</textarea></label>
+          <label>About company<textarea name="description" rows="5" placeholder="Describe the company, mission and culture">{{ company.description or '' }}</textarea></label>
+          <label>Benefits (comma separated)<input name="benefits" value="{{ company.benefits|join(', ') if company.benefits else '' }}" placeholder="Health insurance, Flexible hours, Learning budget"></label>
+          <button class="btn btn--primary" type="submit">Save company information</button>
+        </form>
+      </section>
+      <section class="profile-section" id="post-job">
+        <div class="section-heading"><h2>Post a new job</h2></div>
+        <form method="post" class="company-job-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="company-form-grid">
+            <label>Job title<input name="title" required minlength="3" placeholder="e.g. Python Developer"></label>
+            <label>Job location<input name="location" required minlength="2" placeholder="City, state or Remote"></label>
+            <label>Salary<input name="salary" placeholder="₹4 - ₹7 LPA or Not disclosed"></label>
+            <label>Experience<input name="experience" placeholder="0 - 1 years or 2 - 5 years"></label>
+            <label>Openings<input name="openings" type="number" min="1" value="1"></label>
+            <label>Role<input name="role" placeholder="Software Development"></label>
+            <label>Industry<input name="industry" value="{{ company.industry or '' }}" placeholder="Information Technology"></label>
+            <label>Department<input name="department" placeholder="Engineering / IT"></label>
+            <label>Employment type
+              <select name="employment_type"><option>Full Time</option><option>Permanent</option><option>Contractual</option><option>Internship</option><option>Part Time</option></select>
+            </label>
+            <label>Role category<input name="role_category" placeholder="Software Development"></label>
+          </div>
+          <label>UG qualification<input name="ug_qualification" placeholder="B.Tech / B.E. / BCA / B.Sc. in any specialization"></label>
+          <label>PG qualification<input name="pg_qualification" placeholder="M.Tech / MCA or not required"></label>
+          <label>Key skills<input name="key_skills" placeholder="Python, Flask, SQL, REST APIs"></label>
+          <label>Job description<textarea name="description" required minlength="20" rows="8" placeholder="Responsibilities, requirements and benefits"></textarea></label>
+          <button class="btn btn--primary" type="submit">Post job</button>
+        </form>
+      </section>
+      <section class="profile-section" id="open-jobs">
+        <div class="section-heading"><h2>Open jobs</h2></div>
+        {% if jobs %}
+        {% for job in jobs %}
+        <a class="company-job-row" href="{{ url_for('jobs.job_detail', job_id=job.id) }}">
+          <div><h3>{{ job.title }}</h3><p class="muted">⌖ {{ job.location }}</p></div><span>View job →</span>
+        </a>
+        {% endfor %}
+        {% else %}
+        <p class="muted">No jobs posted yet.</p>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+</section>
+<style>
+.company-job-form{display:grid;gap:14px}.company-job-form label{display:grid;gap:6px;color:#344054;font-size:12px;font-weight:700}.company-job-form input,.company-job-form textarea{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:11px 12px;font:inherit}.company-job-form .btn{justify-self:start}
+.company-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.company-job-form select{width:100%;min-height:44px;border:1px solid #cbd5e1;border-radius:10px;padding:10px 12px;font:inherit}
+@media(max-width:600px){.company-form-grid{grid-template-columns:1fr}}
+</style>
+{% endblock %}

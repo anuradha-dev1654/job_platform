@@ -3,6 +3,7 @@ Flask-SQLAlchemy
 Flask-Migrate
 Flask-Login
 Flask-WTF
+email-validator
 Flask-Mail
 Flask-SocketIO
 python-dotenv
@@ -17,3 +18,7 @@ pdfplumber
 python-docx
 Pillow
 pytest
+psycopg2-binary
+pgvector
+sentence-transformers
+pymupdf

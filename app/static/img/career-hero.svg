@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 430" role="img" aria-label="Professional reviewing career opportunities">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#edf4ff"/>
+      <stop offset="1" stop-color="#dce7ff"/>
+    </linearGradient>
+    <linearGradient id="shirt" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#315fbe"/>
+      <stop offset="1" stop-color="#173a82"/>
+    </linearGradient>
+  </defs>
+  <rect width="620" height="430" rx="28" fill="url(#bg)"/>
+  <circle cx="510" cy="88" r="48" fill="#fff" opacity=".86"/>
+  <circle cx="510" cy="88" r="29" fill="#f59e0b"/>
+  <rect x="55" y="78" width="510" height="260" rx="22" fill="#fff" opacity=".88"/>
+  <rect x="78" y="105" width="210" height="14" rx="7" fill="#cbd9f5"/>
+  <rect x="78" y="132" width="150" height="10" rx="5" fill="#dce5f7"/>
+  <rect x="78" y="164" width="440" height="70" rx="12" fill="#eef4ff"/>
+  <circle cx="125" cy="199" r="24" fill="#2463eb"/>
+  <path d="M112 199l9 9 17-20" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="168" y="184" width="210" height="12" rx="6" fill="#a9bbe1"/>
+  <rect x="168" y="207" width="160" height="10" rx="5" fill="#cad6ed"/>
+  <rect x="78" y="258" width="210" height="58" rx="12" fill="#fff" stroke="#d9e4f6"/>
+  <rect x="306" y="258" width="212" height="58" rx="12" fill="#fff" stroke="#d9e4f6"/>
+  <circle cx="420" cy="310" r="86" fill="#f7b9a7"/>
+  <path d="M350 430c7-74 36-116 70-116s64 42 72 116z" fill="url(#shirt)"/>
+  <circle cx="420" cy="286" r="54" fill="#eeb59f"/>
+  <path d="M368 278c4-55 32-78 66-70 30 7 46 34 40 73-20-20-75-27-106-3z" fill="#263858"/>
+  <circle cx="402" cy="289" r="5" fill="#263858"/>
+  <circle cx="438" cy="289" r="5" fill="#263858"/>
+  <path d="M402 319c11 9 25 9 36 0" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+  <rect x="326" y="362" width="188" height="68" rx="34" fill="#fff" opacity=".96"/>
+  <rect x="350" y="382" width="140" height="12" rx="6" fill="#b9c9e8"/>
+</svg>

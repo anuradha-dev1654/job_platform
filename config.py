@@ -10,7 +10,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv("DB_URI", f"sqlite:///{os.path.join(BASE_DIR, 'app.db')}")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
-    MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 10 MB
+    MAX_CONTENT_LENGTH = 30 * 1024 * 1024  # 10 MB
 
     MAIL_SERVER = os.getenv("MAIL_SERVER")
     MAIL_PORT = int(os.getenv("MAIL_PORT", 587))
@@ -36,6 +36,7 @@ class ProdConfig(Config):
 class TestConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    WTF_CSRF_ENABLED = False
 
 
 config_map = {"dev": DevConfig, "prod": ProdConfig, "test": TestConfig}

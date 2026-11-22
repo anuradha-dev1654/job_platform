@@ -1,2 +1,28 @@
 {% extends "base.html" %}
-{% block content %}{% endblock %}
+{% block title %}Create your profile – CareerBridge{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+<section class="auth-page">
+  <div class="auth-card">
+    <aside class="auth-visual">
+      <a class="auth-brand" href="{{ url_for('jobs.index') }}">CareerBridge</a>
+      <div class="auth-visual__copy"><span>Build your career</span><h1>Create a profile that gets noticed.</h1><p>Add skills, build a resume and discover verified opportunities.</p></div>
+      <div class="auth-orbit" aria-hidden="true"><div>CB</div><i></i><b></b></div>
+    </aside>
+    <div class="auth-form-wrap">
+      <div class="auth-tabs"><a href="{{ url_for('auth.login') }}">Login</a><a class="active" href="{{ url_for('auth.register') }}">Candidate register</a><a href="{{ url_for('auth.register_company') }}">Company register</a></div>
+      <h2>Create candidate account</h2>
+      <p class="auth-subtitle">Start building your professional profile.</p>
+      <form method="post" novalidate>
+        {{ form.hidden_tag() }}
+        {% for f in [form.name, form.email, form.password, form.confirm] %}
+        <div class="auth-field">{{ f.label }}{{ f(autocomplete='name' if f.name == 'name' else ('email' if f.name == 'email' else ('new-password' if f.name in ['password','confirm'] else 'off')), placeholder=('Full name' if f.name == 'name' else ('you@example.com' if f.name == 'email' else ('Minimum 8 characters' if f.name == 'password' else 'Repeat password')))) }}{% for e in f.errors %}<p class="err">{{ e }}</p>{% endfor %}</div>
+        {% endfor %}
+        <button class="btn btn--primary btn--block" type="submit">Create account</button>
+      </form>
+      <p class="auth-switch">Already registered? <a href="{{ url_for('auth.login') }}">Login</a></p>
+      <p class="auth-switch">Hiring talent? <a href="{{ url_for('auth.register_company') }}">Register your company</a></p>
+    </div>
+  </div>
+</section>
+{% endblock %}

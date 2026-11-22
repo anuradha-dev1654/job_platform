@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 from config import config_map
-from .extensions import db, migrate, login_manager, socketio, mail, celery
+from .extensions import db, migrate, login_manager, socketio, mail, csrf, celery
 
 
 def create_app(config_name="dev"):
@@ -10,6 +10,7 @@ def create_app(config_name="dev"):
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
+    csrf.init_app(app)
     socketio.init_app(app)
     mail.init_app(app)
     celery.conf.update(

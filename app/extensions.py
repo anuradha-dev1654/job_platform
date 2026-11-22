@@ -3,6 +3,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_socketio import SocketIO
 from flask_mail import Mail
+from flask_wtf.csrf import CSRFProtect
 from celery import Celery
 
 db = SQLAlchemy()
@@ -11,4 +12,5 @@ login_manager = LoginManager()
 login_manager.login_view = "auth.login"
 socketio = SocketIO()
 mail = Mail()
+csrf = CSRFProtect()
 celery = Celery(__name__)

@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}Company registration – CareerBridge{% endblock %}
+{% block content %}
+{% macro err(name) %}{% if errors.get(name) %}<p class="err" role="alert">{{ errors[name] }}</p>{% endif %}{% endmacro %}
+{% macro doc(name, label) %}
+<div class="doc" data-doc>
+  <input class="sr" type="file" id="{{ name }}" name="{{ name }}" accept=".pdf,.png,.jpg,.jpeg">
+  <div><strong>{{ label }}</strong><span class="doc__state" data-state>No file chosen. PDF, PNG or JPG, up to 5 MB.</span></div>
+  <label class="btn btn--ghost btn--sm" for="{{ name }}">Choose file</label>
+  {{ err(name) }}
+</div>
+{% endmacro %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/company_register.css') }}">
+<script src="{{ url_for('static', filename='js/company_register.js') }}" defer></script>
+
+<section class="reg">
+  <div class="reg__card">
+    <header class="reg__head">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>
+      <h1>Company Registration <span>Secure Verification</span></h1>
+    </header>
+
+    <ol class="steps" aria-label="Progress">
+      <li data-step-tab="1">1 Representative</li>
+      <li data-step-tab="2">2 Company info</li>
+      <li data-step-tab="3">3 Documents</li>
+      <li data-step-tab="4">4 Verify &amp; secure</li>
+    </ol>
+
+    <form id="reg-form" method="post" enctype="multipart/form-data" novalidate
+          data-send-url="{{ url_for('auth.company_send_otp') }}"
+          data-verify-url="{{ url_for('auth.company_verify_otp') }}"
+          data-verified-email="{{ verified_email }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <!-- STEP 1 -->
+      <section class="step" data-step="1">
+        <h2>Step 1: Representative verification</h2>
+        <div class="fld"><label for="rep_name">Full name</label>
+          <input id="rep_name" name="rep_name" value="{{ v.get('rep_name','') }}" autocomplete="name" data-req>{{ err('rep_name') }}</div>
+        <div class="fld"><label for="designation">Designation</label>
+          <select id="designation" name="designation">
+            <option value="">Select designation</option>
+            {% for d in designations %}<option value="{{ d }}" {{ 'selected' if v.get('designation') == d }}>{{ d }}</option>{% endfor %}
+          </select>{{ err('designation') }}</div>
+        <div class="fld"><label for="rep_email">Official company email</label>
+          <div class="inline">
+            <input id="rep_email" name="rep_email" type="email" value="{{ v.get('rep_email','') }}" autocomplete="email" data-req>
+            <button class="btn btn--primary btn--sm" type="button" id="send-otp" hidden>Send OTP</button>
+          </div>
+          <p class="hint">Use your company domain email, not Gmail or Yahoo.</p>
+          <p class="chip" id="email-status" hidden>Email verified</p>
+          {{ err('rep_email') }}</div>
+        <div class="fld" id="otp-row" hidden><label for="otp">Enter OTP</label>
+          <div class="inline">
+            <input id="otp" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="6-digit code">
+            <button class="btn btn--primary btn--sm" type="button" id="verify-otp">Verify</button>
+          </div>
+        </div>
+        {{ doc('rep_id', 'Your ID proof (Aadhaar, PAN, Passport)') }}
+        {{ doc('auth_letter', 'Authorization letter') }}
+        <div class="fld"><label class="check"><input type="checkbox" name="confirm_rep" {{ 'checked' if v.get('confirm_rep') }}>
+          I confirm that I am an authorised representative of this company and all information provided is true.</label>{{ err('confirm_rep') }}</div>
+        <div class="nav-row"><span></span><button class="btn btn--primary" type="button" data-next>Proceed to company info</button></div>
+      </section>
+
+      <!-- STEP 2 -->
+      <section class="step" data-step="2" hidden>
+        <h2>Step 2: Company information</h2>
+        <div class="logo-upload" data-logo>
+          <input id="company_logo" name="company_logo" type="file" accept=".jpg,.jpeg,.png">
+          <div class="logo-preview" data-logo-preview aria-hidden="true">CB</div>
+          <div><strong>Company logo</strong><span class="hint">JPG or PNG, up to 5 MB</span>{{ err('company_logo') }}</div>
+          <label class="btn btn--ghost btn--sm" for="company_logo">Choose logo</label>
+        </div>
+        <div class="fld"><label for="company_name">Company name</label>
+          <input id="company_name" name="company_name" value="{{ v.get('company_name','') }}" data-req>{{ err('company_name') }}</div>
+        <div class="row2">
+          <div class="fld"><label for="corporate_id_type">Corporate ID type</label>
+            <select id="corporate_id_type" name="corporate_id_type">
+              {% for t in id_types %}<option value="{{ t }}" {{ 'selected' if v.get('corporate_id_type') == t }}>{{ t }}</option>{% endfor %}
+            </select></div>
+          <div class="fld"><label for="corporate_id">Corporate ID number <span>(optional)</span></label>
+            <input id="corporate_id" name="corporate_id" value="{{ v.get('corporate_id','') }}" autocapitalize="characters">{{ err('corporate_id') }}</div>
+        </div>
+        <div class="fld"><label for="business_type">Business type</label>
+          <select id="business_type" name="business_type">
+            <option value="">Select business type</option>
+            {% for b in business_types %}<option value="{{ b }}" {{ 'selected' if v.get('business_type') == b }}>{{ b }}</option>{% endfor %}
+          </select>{{ err('business_type') }}</div>
+        <div class="fld"><label for="website">Company website</label>
+          <input id="website" name="website" type="url" placeholder="https://example.com" value="{{ v.get('website','') }}">
+          <p class="hint">We check that the website is reachable and matches your email domain.</p>{{ err('website') }}</div>
+        <div class="row2">
+          <div class="fld"><label for="industry">Industry</label>
+            <input id="industry" name="industry" value="{{ v.get('industry','') }}" placeholder="Information Technology">{{ err('industry') }}</div>
+          <div class="fld"><label for="company_size">Company size</label>
+            <select id="company_size" name="company_size">
+              <option value="">Select company size</option>
+              {% for size in ['1-10 employees','11-50 employees','51-200 employees','201-500 employees','501-1000 employees','1000+ employees'] %}
+              <option value="{{ size }}" {{ 'selected' if v.get('company_size') == size }}>{{ size }}</option>
+              {% endfor %}
+            </select>{{ err('company_size') }}</div>
+        </div>
+        <div class="row2">
+          <div class="fld"><label for="founded_year">Founded year</label>
+            <input id="founded_year" name="founded_year" type="number" min="1800" max="2026" value="{{ v.get('founded_year','') }}" placeholder="2018"></div>
+          <div class="fld"><label for="rating">Company rating</label>
+            <input id="rating" name="rating" type="number" min="0" max="5" step="0.1" value="{{ v.get('rating','') }}" placeholder="4.2"></div>
+        </div>
+        <div class="fld"><label for="description">About company</label>
+          <textarea id="description" name="description" rows="4" placeholder="Describe your company, mission and work culture">{{ v.get('description','') }}</textarea>{{ err('description') }}</div>
+        <div class="fld"><label for="benefits">Benefits (comma separated)</label>
+          <input id="benefits" name="benefits" value="{{ v.get('benefits','') }}" placeholder="Health insurance, Flexible work, Learning budget"></div>
+        <div class="fld"><label for="address">Registered address <span>(optional)</span></label>
+          <textarea id="address" name="address" rows="3">{{ v.get('address','') }}</textarea>{{ err('address') }}</div>
+        <div class="row2">
+          <div class="fld"><label for="city">City <span>(optional)</span></label>
+            <input id="city" name="city" value="{{ v.get('city','') }}">{{ err('city') }}</div>
+          <div class="fld"><label for="phone">Mobile number <span>(optional)</span></label>
+            <input id="phone" name="phone" inputmode="numeric" maxlength="10" placeholder="10-digit number" value="{{ v.get('phone','') }}">{{ err('phone') }}</div>
+        </div>
+        <div class="nav-row"><button class="btn btn--ghost" type="button" data-back>Back</button><button class="btn btn--primary" type="button" data-next>Next: upload documents</button></div>
+      </section>
+
+      <!-- STEP 3 -->
+      <section class="step" data-step="3" hidden>
+        <h2>Step 3: Upload documents</h2>
+        <p class="hint">Drag a file onto a card or choose it. PDF, PNG or JPG, up to 5 MB each.</p>
+        <div class="docs">
+          {{ doc('incorp_cert', 'Certificate of incorporation') }}
+          {{ doc('gst_pan', 'GST / PAN document') }}
+          {{ doc('owner_id', 'Owner / ID proof') }}
+        </div>
+        <div class="nav-row"><button class="btn btn--ghost" type="button" data-back>Back</button><button class="btn btn--primary" type="button" data-next>Next: verify &amp; secure</button></div>
+      </section>
+
+      <!-- STEP 4 -->
+      <section class="step" data-step="4" hidden>
+        <h2>Step 4: Verify &amp; secure</h2>
+        <p class="chip" id="summary-email">Email verified</p>
+        <div class="fld"><label for="password">Create password</label>
+          <div class="pass"><input id="password" name="password" type="password" autocomplete="new-password" data-req>
+            <button type="button" data-toggle-pass="password">Show</button></div>
+          <p class="hint">At least 8 characters.</p>{{ err('password') }}</div>
+        <div class="fld"><label for="confirm_password">Confirm password</label>
+          <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" data-req>{{ err('confirm_password') }}</div>
+        <div class="fld"><label class="check"><input type="checkbox" name="confirm_info" data-req {{ 'checked' if v.get('confirm_info') }}>
+          I confirm that the information provided is true and belongs to this company.</label>{{ err('confirm_info') }}</div>
+        <div class="fld"><label class="check"><input type="checkbox" name="agree_terms" data-req {{ 'checked' if v.get('agree_terms') }}>
+          I agree to the <a href="#">Terms &amp; Conditions</a> and <a href="#">Privacy Policy</a>.</label>{{ err('agree_terms') }}</div>
+        <div class="nav-row"><button class="btn btn--ghost" type="button" data-back>Back</button><button class="btn btn--primary" type="submit" id="submit-btn">Complete registration</button></div>
+        <p class="hint center">Your application will be reviewed for approval before you can post jobs.</p>
+      </section>
+    </form>
+  </div>
+</section>
+{% endblock %}

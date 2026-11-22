@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}CareerBridge – Find your dream job{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div class="hero-copy">
+    <span class="hero-tag">AI-powered career platform</span>
+    <h1>Find work that <em>moves you forward.</em></h1>
+    <p>{{ total_jobs }} verified job{{ '' if total_jobs == 1 else 's' }} for you to explore</p>
+  </div>
+  <div class="hero-visual"><img src="{{ url_for('static', filename='img/career-hero.svg') }}" alt="Career opportunities illustration"></div>
+
+  <form class="search hero-search" action="{{ url_for('jobs.search') }}" method="get" role="search">
+    <label class="sr" for="s-q">Skills, designations or companies</label>
+    <input id="s-q" name="q" type="search" placeholder="Enter skills / designations / companies">
+    <label class="sr" for="s-exp">Experience</label>
+    <select id="s-exp" name="exp">
+      <option value="">Select experience</option>
+      <option value="0">Fresher</option>
+      <option value="1">1 year</option><option value="2">2 years</option><option value="3">3 years</option>
+      <option value="5">5 years</option><option value="8">8+ years</option>
+    </select>
+    <label class="sr" for="s-loc">Location</label>
+    <input id="s-loc" name="loc" type="text" placeholder="Enter any city or location" list="location-options" autocomplete="off">
+    <datalist id="location-options"></datalist>
+    <button class="btn btn--primary" type="submit">Search</button>
+  </form>
+</section>
+
+<section class="wrap">
+  <ul class="chips">
+    {% for label in categories %}
+      <li><a href="{{ url_for('jobs.search', q=label) }}">{{ label }} <span aria-hidden="true">&rsaquo;</span></a></li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section class="wrap">
+  <div class="sec-head">
+    <h2>Top companies hiring now</h2>
+    <div class="arrows">
+      <button type="button" aria-label="Scroll left" data-scroll="-1">&lsaquo;</button>
+      <button type="button" aria-label="Scroll right" data-scroll="1">&rsaquo;</button>
+    </div>
+  </div>
+
+  {% if companies %}
+  <div class="track" id="company-track" tabindex="0" aria-label="Top companies">
+    {% for c in companies %}
+    <a class="ccard" href="{{ url_for('jobs.company_detail', company_id=c.id) }}">
+      {% if c.logo_path %}
+      <img class="ccard__logo ccard__logo-image" src="{{ url_for('jobs.company_logo', company_id=c.id) }}" alt="{{ c.name }} logo">
+      {% else %}
+      <span class="ccard__logo" aria-hidden="true">{{ c.name[:1] | upper }}</span>
+      {% endif %}
+      <strong>{{ c.name }}</strong>
+      <span class="muted">{{ c.jobs }} open job{{ '' if c.jobs == 1 else 's' }}</span>
+      {% if c.trust is not none %}<span class="badge">Trust {{ c.trust }}/100</span>{% else %}<span class="badge badge--wait">Verification pending</span>{% endif %}
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="empty">No verified companies yet. Companies appear here once an admin approves them.</p>
+  {% endif %}
+</section>
+
+<section class="wrap">
+  <div class="band">
+    <div>
+      <h2>Hiring? Post a job in minutes</h2>
+      <p>Get AI-matched candidates, resume screening and background checks in one place.</p>
+    </div>
+    <a class="btn btn--primary" href="{{ url_for('auth.register_company') }}">Register as a company</a>
+</section>
+
+{% endblock %}

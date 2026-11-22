@@ -1,0 +1,61 @@
+.reg{background:var(--bg);padding:32px 16px 56px}
+.reg__card{max-width:760px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(11,42,107,.08)}
+.reg__head{background:var(--navy);color:#fff;display:flex;align-items:center;gap:12px;padding:16px 24px}
+.reg__head h1{margin:0;font-size:18px}
+.reg__head h1 span{font-weight:400;opacity:.85}
+.reg__head h1 span::before{content:"– "}
+
+.steps{list-style:none;margin:0;padding:12px 16px;background:var(--navy);display:flex;gap:8px;flex-wrap:wrap}
+.steps li{flex:1;min-width:120px;text-align:center;font-size:13px;font-weight:600;padding:8px 10px;border-radius:8px;color:#DCE6FF;background:rgba(255,255,255,.08)}
+.steps li.is-current{background:#fff;color:var(--navy)}
+.steps li.is-done{background:#1E4DB7;color:#fff}
+.steps li.is-done::before{content:"\2713  "}
+
+form#reg-form{padding:24px}
+.step h2{font-size:20px;margin:0 0 18px;color:var(--navy);text-align:center}
+.step[hidden]{display:none}
+
+.fld{margin-bottom:16px}
+.fld label:not(.check){display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+.fld input:not([type=checkbox]):not([type=file]),.fld select,.fld textarea{width:100%;min-height:46px;border:1px solid #C9D3E6;border-radius:10px;padding:10px 14px;font:inherit;font-size:14px;background:#fff}
+.fld textarea{resize:vertical}
+.fld input[aria-invalid=true],.fld select[aria-invalid=true],.fld textarea[aria-invalid=true]{border-color:#B42318}
+.inline{display:flex;gap:10px}
+.inline input{flex:1;min-width:0}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.hint{margin:6px 0 0;font-size:12.5px;color:var(--muted)}
+.hint.center{text-align:center;margin-top:14px}
+.err{margin:6px 0 0;font-size:13px;color:#B42318;font-weight:600}
+.chip{display:inline-block;margin:8px 0 0;padding:4px 12px;border-radius:99px;background:var(--okbg);color:var(--ok);font-size:13px;font-weight:600}
+.chip[hidden]{display:none}
+.btn--sm{padding:0 16px;font-size:14px;white-space:nowrap}
+
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.4;cursor:pointer}
+.check input{margin-top:3px;width:18px;height:18px;flex:none}
+
+.doc{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border:1.5px dashed #9DB6EA;border-radius:12px;padding:12px 14px;margin-bottom:14px;background:#F8FAFF}
+.doc strong{display:block;font-size:14px}
+.doc__state{display:block;font-size:12.5px;color:var(--muted);margin-top:2px;word-break:break-all}
+.doc.is-over{background:#EAF1FF;border-color:var(--blue)}
+.doc.is-ok{border-style:solid;border-color:#86D2A0;background:#F2FBF5}
+.doc.is-ok .doc__state{color:var(--ok);font-weight:600}
+.doc:focus-within{outline:3px solid #93B4FF;outline-offset:2px}
+.doc .err{flex-basis:100%;margin:0}
+.docs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.docs .doc{flex-direction:column;align-items:flex-start;margin:0}
+
+.pass{position:relative}
+.pass input{padding-right:70px !important}
+.pass button{position:absolute;right:6px;top:3px;min-height:40px;border:0;background:none;color:var(--blue);font-weight:600;cursor:pointer}
+
+.nav-row{display:flex;justify-content:space-between;gap:12px;margin-top:22px}
+
+@media(max-width:560px){.row2{grid-template-columns:1fr}.inline{flex-direction:column}.steps li{min-width:calc(50% - 8px)}}
+
+.reg{min-height:calc(100vh - 68px);background:linear-gradient(135deg,#eff5ff 0%,#fff 55%,#f5efff 100%);padding:42px 18px 70px}
+.reg__card{max-width:920px;border-radius:22px;box-shadow:0 24px 60px rgba(32,70,130,.14)}
+.reg__head{min-height:86px;padding:20px 28px;background:linear-gradient(120deg,#15366f,#2463eb)}
+.reg__head h1{font-size:21px}.steps{padding:12px 20px;background:#15366f}.steps li{min-height:48px;display:flex;align-items:center;justify-content:center;font-size:14px;border-radius:10px}
+form#reg-form{padding:28px}.step h2{font-size:24px}.fld label:not(.check){font-size:14px}.fld input:not([type=checkbox]):not([type=file]),.fld select,.fld textarea{min-height:50px;font-size:15px;border-radius:12px}
+.logo-upload{display:flex;align-items:center;gap:14px;border:1px solid #d7e2f4;border-radius:16px;padding:16px;margin-bottom:18px;background:#f8fbff}.logo-upload>input{display:none}.logo-preview{width:72px;height:72px;flex:none;border-radius:16px;background:#e6efff;border:1px solid #c8daf7;display:grid;place-items:center;color:#2463eb;font-size:24px;font-weight:900;overflow:hidden}.logo-preview img{width:100%;height:100%;object-fit:contain;padding:7px}.logo-upload>div:nth-last-of-type(2){flex:1}.logo-upload strong{display:block;font-size:15px}.logo-upload .hint{display:block}.docs .doc{min-height:150px}.nav-row .btn{min-height:50px;font-size:15px}
+@media(max-width:560px){.reg{padding:20px 10px 50px}.steps li{min-width:calc(50% - 8px);font-size:12px}.logo-upload{align-items:flex-start;flex-wrap:wrap}.logo-preview{width:64px;height:64px}}
